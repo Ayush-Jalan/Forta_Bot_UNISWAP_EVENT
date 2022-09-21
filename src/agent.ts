@@ -8,7 +8,7 @@ import {
   FindingType,
   getJsonRpcUrl,
 } from "forta-agent";
-import { SWAP_EVENT, UNISWAP_FACTORY, UNIPOOLABI, POOL_INIT_HASH } from "./utils";
+import { SWAP_EVENT, UNISWAP_FACTORY, UNIPOOLABI, POOL_INIT_HASH, getUniswapAddress } from "./utils";
 import { ethers } from "ethers";
 import { createAddress } from "forta-agent-tools";
 export const provideHandleTransaction = (
@@ -36,13 +36,10 @@ export const provideHandleTransaction = (
       } catch (e) {
         tokenA = createAddress("0x00");
         tokenB = createAddress("0x00");
-        fee = 0;
+        fee = "0";
       }
-      const salt = ethers.utils.keccak256(
-        ethers.utils.defaultAbiCoder.encode(["address", "address", "uint24"], [tokenA, tokenB, fee])
-      );
-      const uniswapAddress = ethers.utils.getCreate2Address(factory, salt, initHash);
-      if (uniswapAddress.toLowerCase() === poolAddress.toLowerCase()) {
+      const uniswapAddress = await getUniswapAddress(tokenA, tokenB, fee, factory, initHash);
+      if (poolAddress.toLowerCase() === uniswapAddress.toLowerCase()) {
         const { sender, recipient, amount0, amount1 } = swap.args;
         findings.push(
           Finding.fromObject({
