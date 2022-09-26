@@ -1,7 +1,5 @@
 import {
-  BlockEvent,
   Finding,
-  HandleBlock,
   HandleTransaction,
   TransactionEvent,
   FindingSeverity,
@@ -22,7 +20,7 @@ export const provideHandleTransaction = (
 
     const swapEvents = txEvent.filterLog(swapAbi);
 
-    for (var swap of swapEvents) {
+    for (const swap of swapEvents) {
       const poolAddress = swap.address;
       const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
       const poolContract = new ethers.Contract(poolAddress, poolAbi, provider);
