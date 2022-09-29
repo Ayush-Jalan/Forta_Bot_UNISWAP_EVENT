@@ -14,7 +14,7 @@ const MOCK_METADATA = {
   sender: MOCK_SENDER,
   recipient: MOCK_RECEIVER,
   token0: "0x839e71613f9aa06e5701cf6de63e303616b0dde3",
-  token1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" ,
+  token1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   amount0: "10",
   amount1: "10",
 };
@@ -24,7 +24,7 @@ const MOCK_METADATA_2 = {
   sender: MOCK_SENDER,
   recipient: MOCK_RECEIVER,
   token0: "0x839e71613f9aa06e5701cf6de63e303616b0dde3",
-  token1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" ,
+  token1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   amount0: "20",
   amount1: "20",
 };
@@ -44,6 +44,7 @@ const MOCK_FINDING = (
     alertId: "UNISWAP-1",
     severity: FindingSeverity.Info,
     type: FindingType.Info,
+    protocol: "Uniswap",
     metadata: {
       pool: poolAddress,
       sender: sender.toString(),
@@ -72,27 +73,67 @@ describe("Swap on UniSwap V3", () => {
   });
 
   it("returns empty finding if the swap does not occur on Uniswap V3", async () => {
-    txEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT, MOCK_POOL, [MOCK_SENDER, MOCK_RECEIVER, 10, 10, 10, 10, 10]);  
+    txEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT, MOCK_POOL, [
+      MOCK_SENDER,
+      MOCK_RECEIVER,
+      10,
+      10,
+      10,
+      10,
+      10,
+    ]);
     findings = await handleTransaction(txEvent);
     expect(findings).toStrictEqual([]);
   });
 
   it("returns a finding if a swap occurs on Uniswap V3", async () => {
-    txEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [MOCK_SENDER, MOCK_RECEIVER, 10, 10, 10, 10, 10]);  
+    txEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [
+      MOCK_SENDER,
+      MOCK_RECEIVER,
+      10,
+      10,
+      10,
+      10,
+      10,
+    ]);
     findings = await handleTransaction(txEvent);
     expect(findings).toStrictEqual([
-      MOCK_FINDING(MOCK_METADATA.pool, MOCK_METADATA.sender, MOCK_METADATA.recipient, MOCK_METADATA.token0, MOCK_METADATA.token1, MOCK_METADATA.amount0, MOCK_METADATA.amount1),
+      MOCK_FINDING(
+        MOCK_METADATA.pool,
+        MOCK_METADATA.sender,
+        MOCK_METADATA.recipient,
+        MOCK_METADATA.token0,
+        MOCK_METADATA.token1,
+        MOCK_METADATA.amount0,
+        MOCK_METADATA.amount1
+      ),
     ]);
   });
 
   it("returns multiple findings when multiple swap occurs on Uniswap V3", async () => {
     txEvent = new TestTransactionEvent()
-    .addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [MOCK_SENDER, MOCK_RECEIVER, 10, 10, 10, 10, 10])
-    .addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [MOCK_SENDER, MOCK_RECEIVER, 20, 20, 20, 20, 20]);  
+      .addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [MOCK_SENDER, MOCK_RECEIVER, 10, 10, 10, 10, 10])
+      .addEventLog(SWAP_EVENT, MOCK_UNIPOOL, [MOCK_SENDER, MOCK_RECEIVER, 20, 20, 20, 20, 20]);
     findings = await handleTransaction(txEvent);
     expect(findings).toStrictEqual([
-      MOCK_FINDING(MOCK_METADATA.pool, MOCK_METADATA.sender, MOCK_METADATA.recipient, MOCK_METADATA.token0, MOCK_METADATA.token1, MOCK_METADATA.amount0, MOCK_METADATA.amount1),
-      MOCK_FINDING(MOCK_METADATA_2.pool, MOCK_METADATA_2.sender, MOCK_METADATA_2.recipient, MOCK_METADATA_2.token0, MOCK_METADATA_2.token1, MOCK_METADATA_2.amount0, MOCK_METADATA_2.amount1),
+      MOCK_FINDING(
+        MOCK_METADATA.pool,
+        MOCK_METADATA.sender,
+        MOCK_METADATA.recipient,
+        MOCK_METADATA.token0,
+        MOCK_METADATA.token1,
+        MOCK_METADATA.amount0,
+        MOCK_METADATA.amount1
+      ),
+      MOCK_FINDING(
+        MOCK_METADATA_2.pool,
+        MOCK_METADATA_2.sender,
+        MOCK_METADATA_2.recipient,
+        MOCK_METADATA_2.token0,
+        MOCK_METADATA_2.token1,
+        MOCK_METADATA_2.amount0,
+        MOCK_METADATA_2.amount1
+      ),
     ]);
   });
 });

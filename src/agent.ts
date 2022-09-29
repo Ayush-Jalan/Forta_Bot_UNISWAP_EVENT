@@ -4,7 +4,7 @@ import {
   TransactionEvent,
   FindingSeverity,
   FindingType,
-  getJsonRpcUrl,
+  getEthersProvider,
 } from "forta-agent";
 import { SWAP_EVENT, UNISWAP_FACTORY, UNIPOOLABI, POOL_INIT_HASH, getUniswapAddress } from "./utils";
 import { ethers } from "ethers";
@@ -22,12 +22,12 @@ export const provideHandleTransaction = (
 
     for (const swap of swapEvents) {
       const poolAddress = swap.address;
-      const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+      const provider = getEthersProvider();
       const poolContract = new ethers.Contract(poolAddress, poolAbi, provider);
       let tokenA;
       let tokenB;
       let fee;
-      try{
+      try {
         tokenA = await poolContract.token0();
         tokenB = await poolContract.token1();
         fee = await poolContract.fee();
@@ -46,6 +46,7 @@ export const provideHandleTransaction = (
             alertId: "UNISWAP-1",
             severity: FindingSeverity.Info,
             type: FindingType.Info,
+            protocol: "Uniswap",
             metadata: {
               pool: poolAddress.toLowerCase(),
               sender: sender.toString(),

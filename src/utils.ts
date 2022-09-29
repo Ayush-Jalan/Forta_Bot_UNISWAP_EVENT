@@ -9,10 +9,16 @@ export const UNIPOOLABI = [
 ];
 export const POOL_INIT_HASH = "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54";
 
-export async function getUniswapAddress(tokenA: string, tokenB: string, fee: string, factory: string, initHash: string) {
-    const salt = ethers.utils.keccak256(
-        ethers.utils.defaultAbiCoder.encode(["address", "address", "uint24"], [tokenA, tokenB, fee])
-      );
-      const uniswapAddress = ethers.utils.getCreate2Address(factory, salt, initHash);
-      return uniswapAddress;
+export async function getUniswapAddress(
+  tokenA: string,
+  tokenB: string,
+  fee: string,
+  factory: string,
+  initHash: string
+) {
+  const salt = ethers.utils.keccak256(
+    ethers.utils.defaultAbiCoder.encode(["address", "address", "uint24"], [tokenA, tokenB, fee])
+  );
+  const uniswapAddress = ethers.utils.getCreate2Address(factory, salt, initHash);
+  return uniswapAddress;
 }
